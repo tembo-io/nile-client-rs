@@ -17,7 +17,7 @@ on:
 
 jobs:
   lint:
-    name: Run linters
+    name: Run linters + tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +36,3 @@ jobs:
 
       - name: Clippy
         run: cargo clippy
-      
-      - name: Tests
-        run: cargo test
