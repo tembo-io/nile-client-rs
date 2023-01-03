@@ -1,17 +1,10 @@
 name: Release to crates.io
 
-on: 
-  push:
-    branches:
-      - main
-
 on:
   push:
     tags:
       - '*'
   workflow_dispatch:
-
-name: Publish to Crates.io
 
 jobs:
 
@@ -32,4 +25,3 @@ jobs:
       - run: cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
-
