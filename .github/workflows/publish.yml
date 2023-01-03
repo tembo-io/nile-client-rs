@@ -11,8 +11,6 @@ on:
       - '*'
   workflow_dispatch:
 
-name: Publish to Crates.io
-
 jobs:
 
   publish:
