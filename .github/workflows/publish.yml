@@ -2,9 +2,9 @@ name: Release to crates.io
 
 on: 
   push:
+    # only run on release branches
     branches:
-      - main
-
+      - release**
 on:
   push:
     tags:
@@ -32,4 +32,3 @@ jobs:
       - run: cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
-
