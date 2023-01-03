@@ -54,12 +54,11 @@ pub struct NileClient {
 // https://www.thenile.dev/rest-api#tag/entities/operation/getOpenAPI
 impl Default for NileClient {
     fn default() -> NileClient {
-        let n = NileClient {
+        NileClient {
             base_url: "https://prod.thenile.dev".to_owned(),
             auth_path: "/auth/login".to_owned(),
             _token: "".to_owned(),
-        };
-        n
+        }
     }
 }
 

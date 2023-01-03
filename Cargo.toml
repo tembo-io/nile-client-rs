@@ -1,9 +1,14 @@
 [package]
 name = "nile-client-rs"
-version = "0.1.0"
+version = "0.1.0-alpha.1"
+description = "A Rust client for the thenile.dev/"
+documentation = "https://github.com/CoreDB-io/nile-client-rs"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+homepage = "https://www.coredb.io"
+keywords = ["thenile", "control-plane"]
+license = "MIT"
+readme = "README.md"
+repo = "https://github.com/CoreDB-io/nile-client-rs"
 
 [dependencies]
 reqwest = { version = "0.11.13", features = ["json"] }
