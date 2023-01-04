@@ -54,7 +54,7 @@ let events = client.get_events(&workspace, &entity_name, 0, 20).await?;
 println!("events: {:#?}", events);
 ```
 
-### Update an atrribute on an existing instance
+### Update attributes on an existing instance
 ```rust
 let mut updates = Vec::new();
 
