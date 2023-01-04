@@ -1,6 +1,6 @@
 # Nile API Rust Client
 
-This is a Rust client for the [Nile API](https://thenile.dev/).
+This is a POC Rust client for the [Nile API](https://thenile.dev/).
 
 
 ## Usage
