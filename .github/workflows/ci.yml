@@ -4,6 +4,8 @@ defaults:
   run:
     shell: bash
 
+on: [push, pull_request]
+
 jobs:
   lint:
     name: Run linters and tests
