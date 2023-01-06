@@ -1,15 +1,16 @@
 use reqwest;
 use serde;
+use serde::{Deserialize, Serialize};
 use serde_json;
 
-#[derive(serde::Serialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
     pub op: String,
     pub path: String,
     pub value: String,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct EntityInstance {
     id: String,
     created: String,
@@ -27,14 +28,14 @@ struct AuthResponse {
     token: String,
 }
 
-#[derive(serde::Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 pub enum EventType {
     CREATE,
     UPDATE,
     DELETE,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct Event {
     pub timestamp: String,
     pub id: i32,
