@@ -1,6 +1,10 @@
+use dotenv::dotenv;
 use reqwest;
+use reqwest::header::{AUTHORIZATION, HeaderMap};
 use serde;
 use serde_json;
+use std::env;
+
 
 #[derive(serde::Serialize, Debug)]
 pub struct InstanceUpdate {
@@ -74,10 +78,6 @@ impl NileClient {
             "email": email.to_owned(),
             "password": password.to_owned(),
         });
-
-use dotenv::dotenv;
-use reqwest::header::{AUTHORIZATION, HeaderMap};
-use std::env;
 
 #[tokio::main]
 impl NileClient {
