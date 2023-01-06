@@ -74,6 +74,40 @@ impl NileClient {
             "email": email.to_owned(),
             "password": password.to_owned(),
         });
+
+use dotenv::dotenv;
+use reqwest::header::{AUTHORIZATION, HeaderMap};
+use std::env;
+
+#[tokio::main]
+impl NileClient {
+pub async fn TokenAuthenticate() -> Result<(, Box<dyn std::error::Error>> {
+    // load .env file into std::env
+    dotenv().ok();
+
+    // pull out token and key from .env variables
+    let api_key: String = env::var(key: "NILE_API_KEY")?;
+    let api_token: String = env::var(key: "NILE_API_TOKEN")?;
+
+    // create a new header map to be used as request headers.
+    let mut headers = HeaderMap::new();
+
+    // populate headers map with token and key.
+    // we have to parse the String into a HeaderValue using parse().
+    headers.insert(AUTHORIZATION, format!("Bearer {}", api_token).parse().unwrap());
+    headers.insert("apikey", api_key.parse().unwrap());
+
+    // create request client, sending request client with url, adding headers, and awaiting response.
+    let client = reqwest::Client::new();
+    let resp = client
+        .get("/net-lb-prod-6faf2ab-850391211.us-west-2.elb.amazonaws.com/workspaces/{workspace}/auth/login")
+        .headers(headers)
+        .send()
+        .await?;
+
+    println!("{:#?}", resp);
+}
+}
         // TODO: handle errors. non-200 must be loud
         let auth = client
             .post(format!(
