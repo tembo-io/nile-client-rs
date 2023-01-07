@@ -12,18 +12,18 @@ pub struct InstanceUpdate {
 
 #[derive(Deserialize, Debug, Serialize)]
 pub struct EntityInstance {
-    id: String,
-    created: String,
-    updated: String,
-    seq: i32,
+    pub id: String,
+    pub created: String,
+    pub updated: String,
+    pub seq: i32,
 
     #[serde(rename = "type")]
-    type_: String,
-    properties: serde_json::Value, // Properties are the entity spec
-    org: String,
+    pub type_: String,
+    pub properties: serde_json::Value, // Properties are the entity spec
+    pub org: String,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 struct AuthResponse {
     token: String,
 }
