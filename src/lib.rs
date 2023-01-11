@@ -1,40 +1,41 @@
 use reqwest;
 use serde;
+use serde::{Deserialize, Serialize};
 use serde_json;
 
-#[derive(serde::Serialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
     pub op: String,
     pub path: String,
     pub value: String,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct EntityInstance {
-    id: String,
-    created: String,
-    updated: String,
-    seq: i32,
+    pub id: String,
+    pub created: String,
+    pub updated: String,
+    pub seq: i32,
 
     #[serde(rename = "type")]
-    type_: String,
-    properties: serde_json::Value, // Properties are the entity spec
-    org: String,
+    pub type_: String,
+    pub properties: serde_json::Value, // Properties are the entity spec
+    pub org: String,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 struct AuthResponse {
     token: String,
 }
 
-#[derive(serde::Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 pub enum EventType {
     CREATE,
     UPDATE,
     DELETE,
 }
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct Event {
     pub timestamp: String,
     pub id: i32,
@@ -62,22 +63,39 @@ impl Default for NileClient {
     }
 }
 
-impl NileClient {
-    pub async fn token_auth(
-        &mut self,
-        token: String,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        self._token = token;
-        Ok(())
-    }
+pub fn token_auth(
+    &mut self,
+    token: String,
+) {
+    self._token = token;
 }
 
 impl NileClient {
     pub async fn authenticate(
         &mut self,
-        token: String,
+        email: String,
+        password: String,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        self._token = token;
+        let client = reqwest::Client::new();
+        // TODO: add token authentication
+        let body = &serde_json::json!({
+            "email": email.to_owned(),
+            "password": password.to_owned(),
+        });
+        // TODO: handle errors. non-200 must be loud
+        let auth = client
+            .post(format!(
+                "{base}{auth}",
+                base = self.base_url,
+                auth = self.auth_path
+            ))
+            .json(&body)
+            .send()
+            .await?
+            .json::<AuthResponse>()
+            .await?;
+
+        self._token = auth.token;
         Ok(())
     }
 
