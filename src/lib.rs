@@ -63,13 +63,6 @@ impl Default for NileClient {
     }
 }
 
-pub fn token_auth(
-    &mut self,
-    token: String,
-) {
-    self._token = token;
-}
-
 impl NileClient {
     pub async fn authenticate(
         &mut self,
@@ -97,6 +90,10 @@ impl NileClient {
 
         self._token = auth.token;
         Ok(())
+    }
+
+    pub fn token_auth(&mut self, token: String) {
+        self._token = token;
     }
 
     // poll for the events in a workspace/entity
