@@ -1,45 +1,40 @@
-use dotenv::dotenv;
 use reqwest;
-use reqwest::header::{AUTHORIZATION, HeaderMap};
 use serde;
-use serde::{Deserialize, Serialize};
 use serde_json;
-use std::env;
 
-
-#[derive(Serialize, Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct InstanceUpdate {
     pub op: String,
     pub path: String,
     pub value: String,
 }
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(serde::Deserialize, Debug)]
 pub struct EntityInstance {
-    pub id: String,
-    pub created: String,
-    pub updated: String,
-    pub seq: i32,
+    id: String,
+    created: String,
+    updated: String,
+    seq: i32,
 
     #[serde(rename = "type")]
-    pub type_: String,
-    pub properties: serde_json::Value, // Properties are the entity spec
-    pub org: String,
+    type_: String,
+    properties: serde_json::Value, // Properties are the entity spec
+    org: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(serde::Deserialize, Debug)]
 struct AuthResponse {
     token: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Serialize)]
+#[derive(serde::Deserialize, Debug, PartialEq)]
 pub enum EventType {
     CREATE,
     UPDATE,
     DELETE,
 }
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(serde::Deserialize, Debug)]
 pub struct Event {
     pub timestamp: String,
     pub id: i32,
@@ -68,54 +63,21 @@ impl Default for NileClient {
 }
 
 impl NileClient {
+    pub async fn token_auth(
+        &mut self,
+        token: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self._token = token;
+        Ok(())
+    }
+}
+
+impl NileClient {
     pub async fn authenticate(
         &mut self,
-        email: String,
-        password: String,
+        token: String,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let client = reqwest::Client::new();
-        // TODO: add token authentication
-        let body = &serde_json::json!({
-            "email": email.to_owned(),
-            "password": password.to_owned(),
-        });
-        
-impl NileClient {
-pub async fn TokenAuthenticate(token) -> Result<(, Box<dyn std::error::Error>> {
-
-    // create a new header map to be used as request headers.
-    let mut headers = HeaderMap::new();
-
-    // populate headers map with token and key.
-    // we have to parse the String into a HeaderValue using parse().
-    headers.insert(AUTHORIZATION, format!("Bearer {}", token).parse().unwrap());
-    headers.insert("apikey", api_key.parse().unwrap());
-
-    // create request client, sending request client with url, adding headers, and awaiting response.
-    let client = reqwest::Client::new();
-    let resp = client
-        .get("/net-lb-prod-6faf2ab-850391211.us-west-2.elb.amazonaws.com/workspaces/{workspace}/auth/login")
-        .headers(headers)
-        .send()
-        .await?;
-
-    println!("{:#?}", resp);
-}
-}
-
-        let auth = client
-            .post(format!(
-                "{base}{auth}",
-                base = self.base_url,
-                auth = self.auth_path
-            ))
-            .json(&body)
-            .send()
-            .await?
-            .json::<AuthResponse>()
-            .await?;
-
-        self._token = auth.token;
+        self._token = token;
         Ok(())
     }
 
