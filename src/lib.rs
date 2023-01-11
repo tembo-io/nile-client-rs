@@ -92,6 +92,10 @@ impl NileClient {
         Ok(())
     }
 
+    pub fn token_auth(&mut self, token: String) {
+        self._token = token;
+    }
+
     // poll for the events in a workspace/entity
     // TODO: how can we handle `seq`?
     pub async fn get_events(
