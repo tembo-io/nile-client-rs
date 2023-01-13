@@ -1,7 +1,4 @@
-use reqwest;
-use serde;
 use serde::{Deserialize, Serialize};
-use serde_json;
 use std::error::Error;
 
 use log::error;
@@ -31,7 +28,7 @@ struct AuthResponse {
     token: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum EventType {
     CREATE,
     UPDATE,
