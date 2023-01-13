@@ -1,3 +1,4 @@
+use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -76,7 +77,7 @@ impl NileClient {
             "password": password.to_owned(),
         });
         // TODO: handle errors. non-200 must be loud
-        let auth = client
+        let resp = client
             .post(format!(
                 "{base}{auth}",
                 base = self.base_url,
@@ -86,13 +87,13 @@ impl NileClient {
             .send()
             .await?;
 
-        if !auth.status().is_success() {
-            let errmsg = format!("Failed to authenticate user, received response with status code:{} and body: {}", auth.status(), auth.text().await?);
+        if !resp.status().is_success() {
+            let errmsg = format!("Failed to authenticate user, received response with status code:{} and body: {}", resp.status(), resp.text().await?);
             log::error!("{}", errmsg);
             return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, errmsg)));
         }
-        let auth = auth.json::<AuthResponse>().await?;
-        self._token = auth.token;
+        let resp = resp.json::<AuthResponse>().await?;
+        self._token = resp.token;
         Ok(())
     }
 
