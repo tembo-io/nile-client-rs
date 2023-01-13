@@ -23,7 +23,7 @@ NILE_URL=https://prod.thenile.dev
 use std::env;
 
 use dotenv::dotenv;
-use nile_client_rs::{InstanceUpdate, NileClient};
+use nile_client_rs::{EntityInstance, InstanceUpdate, NileClient};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -75,10 +75,10 @@ let status_update = InstanceUpdate {
 updates.push(status_update);
 
 // send the updates to the Nile
-let status = client
+let status: EntityInstance = client
     .patch_instance(&workspace, &org, &entity_name, &instance_id, updates)
     .await?;
-print!("status: {:#?}", status);
+println!("status: {:#?}", status);
 }
 
 ```
