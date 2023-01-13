@@ -1,7 +1,7 @@
-use reqwest;
-use serde;
 use serde::{Deserialize, Serialize};
-use serde_json;
+use std::error::Error;
+
+use log::error;
 
 #[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
@@ -28,7 +28,7 @@ struct AuthResponse {
     token: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum EventType {
     CREATE,
     UPDATE,
@@ -156,7 +156,7 @@ impl NileClient {
         entity_name: &str,
         instance_id: &str,
         updates: Vec<InstanceUpdate>,
-    ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    ) -> Result<EntityInstance, Box<dyn Error>> {
         let uri = format!(
             "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
             base_url = self.base_url,
@@ -169,11 +169,19 @@ impl NileClient {
         let resp = client
             .patch(uri)
             .json(&updates)
+            .timeout(std::time::Duration::from_secs(5))
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
             .await?;
-        let resp_obj = resp.json::<serde_json::Value>().await.unwrap();
-        Ok(resp_obj)
+
+        if resp.status().is_success() {
+            let resp_obj = resp.json::<EntityInstance>().await?;
+            Ok(resp_obj)
+        } else {
+            let errmsg = format!("Error: {}, {}", resp.status().as_u16(), resp.text().await?);
+            error!("{errmsg}");
+            Err(errmsg.into())
+        }
     }
 }
 
