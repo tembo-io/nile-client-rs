@@ -87,9 +87,16 @@ impl NileClient {
             .await?;
 
         if !resp.status().is_success() {
-            let errmsg = format!("Failed to authenticate user, received response with status code:{} and body: {}", resp.status(), resp.text().await?);
+            let errmsg = format!(
+                "Failed to authenticate user, received response with status code:{} and body: {}",
+                resp.status(),
+                resp.text().await?
+            );
             log::error!("{}", errmsg);
-            return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, errmsg)));
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                errmsg,
+            )));
         }
         let resp = resp.json::<AuthResponse>().await?;
         self._token = resp.token;
