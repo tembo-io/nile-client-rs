@@ -70,12 +70,10 @@ impl NileClient {
         password: String,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let client = reqwest::Client::new();
-        // TODO: add token authentication
         let body = &serde_json::json!({
             "email": email.to_owned(),
             "password": password.to_owned(),
         });
-        // TODO: handle errors. non-200 must be loud
         let resp = client
             .post(format!(
                 "{base}{auth}",
@@ -87,22 +85,13 @@ impl NileClient {
             .await?;
 
         if !resp.status().is_success() {
-            let errmsg = format!(
-                "Failed to authenticate user, received response with status code:{} and body: {}",
-                resp.status(),
-                resp.text().await?
-            );
-            log::error!("{}", errmsg);
-            return Err(Box::new(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                errmsg,
-            )));
+            return handle_response::<AuthResponse>(resp).await.map(|_| ());
         }
-        let resp = resp.json::<AuthResponse>().await?;
-        self._token = resp.token;
+
+        let auth_response = handle_response::<AuthResponse>(resp).await?;
+        self._token = auth_response.token;
         Ok(())
     }
-
     pub fn token_auth(&mut self, token: String) {
         self._token = token;
     }
@@ -130,8 +119,7 @@ impl NileClient {
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
             .await?;
-        let events = resp.json::<Vec<Event>>().await?;
-        Ok(events)
+        handle_response::<Vec<Event>>(resp).await
     }
 
     // retrieve existing instances of the entity
@@ -153,8 +141,7 @@ impl NileClient {
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
             .await?;
-        let instances = resp.json::<Vec<EntityInstance>>().await?;
-        Ok(instances)
+        handle_response::<Vec<EntityInstance>>(resp).await
     }
 
     // update attributes on an existing entity
@@ -185,15 +172,19 @@ impl NileClient {
             .send()
             .await?;
 
-        if resp.status().is_success() {
-            let resp_obj = resp.json::<EntityInstance>().await?;
-            Ok(resp_obj)
-        } else {
-            let errmsg = format!("Error: {}, {}", resp.status().as_u16(), resp.text().await?);
-            error!("{errmsg}");
-            Err(errmsg.into())
-        }
+        handle_response::<EntityInstance>(resp).await
     }
+}
+
+// Error-handling function to use repeatedly.
+pub async fn handle_response<T: for<'de> serde::Deserialize<'de>>(
+    resp: reqwest::Response,
+) -> Result<T, Box<dyn std::error::Error>> {
+    if !resp.status().is_success() {
+        return Err(format!("HTTP error {}", resp.status()).into());
+    }
+    let value = resp.json::<T>().await?;
+    Ok(value)
 }
 
 #[cfg(test)]
