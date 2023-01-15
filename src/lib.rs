@@ -85,10 +85,11 @@ impl NileClient {
             .await?;
 
         if !resp.status().is_success() {
-            return handle_response::<AuthResponse>(resp).await.map(|_| ());
+            return handle_response::<AuthResponse>(resp, "authenticate")
+                .await
+                .map(|_| ());
         }
-
-        let auth_response = handle_response::<AuthResponse>(resp).await?;
+        let auth_response = handle_response::<AuthResponse>(resp, "authenticate").await?;
         self._token = auth_response.token;
         Ok(())
     }
@@ -119,7 +120,7 @@ impl NileClient {
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
             .await?;
-        handle_response::<Vec<Event>>(resp).await
+        handle_response::<Vec<Event>>(resp, "get_events").await
     }
 
     // retrieve existing instances of the entity
@@ -141,7 +142,7 @@ impl NileClient {
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
             .await?;
-        handle_response::<Vec<EntityInstance>>(resp).await
+        handle_response::<Vec<EntityInstance>>(resp, "get_instances").await
     }
 
     // update attributes on an existing entity
@@ -172,16 +173,27 @@ impl NileClient {
             .send()
             .await?;
 
-        handle_response::<EntityInstance>(resp).await
+        handle_response::<EntityInstance>(resp, "patch_instance").await
     }
 }
 
 // Error-handling function to use repeatedly.
 pub async fn handle_response<T: for<'de> serde::Deserialize<'de>>(
     resp: reqwest::Response,
+    method: &'static str,
 ) -> Result<T, Box<dyn std::error::Error>> {
     if !resp.status().is_success() {
-        return Err(format!("HTTP error {}", resp.status()).into());
+        let errmsg = format!(
+            "Failed to call method '{}', received response with status code:{} and body: {}",
+            method,
+            resp.status(),
+            resp.text().await?
+        );
+        error!("{}", errmsg);
+        return Err(Box::new(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            errmsg,
+        )));
     }
     let value = resp.json::<T>().await?;
     Ok(value)
