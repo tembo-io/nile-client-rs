@@ -1,0 +1,17 @@
+# Organization
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**id** | **String** |  | [readonly]
+**created** | Option<**String**> |  | [optional][readonly]
+**updated** | Option<**String**> |  | [optional][readonly]
+**seq** | Option<**i64**> |  | [optional][readonly]
+**r#type** | **String** |  | 
+**name** | **String** |  | 
+**creator** | **String** | ID of the user who created this organization | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
