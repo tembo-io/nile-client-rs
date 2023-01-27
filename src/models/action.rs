@@ -19,7 +19,6 @@ pub enum Action {
     Write,
     #[serde(rename = "deny")]
     Deny,
-
 }
 
 impl ToString for Action {
@@ -38,6 +37,4 @@ impl Default for Action {
     }
 }
 
-
-
-
+use serde::{Deserialize, Serialize};

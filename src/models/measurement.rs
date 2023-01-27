@@ -10,8 +10,6 @@
 
 /// Measurement : Measurements associated with this metric
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct Measurement {
     /// An ISO-8601 formatted date-time, i.e., 2018-11-13T20:20:39+00:00, that represents the time the measurement was created.
@@ -36,4 +34,4 @@ impl Measurement {
     }
 }
 
-
+use serde::{Deserialize, Serialize};

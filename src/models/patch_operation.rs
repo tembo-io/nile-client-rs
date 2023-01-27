@@ -10,11 +10,10 @@
 
 /// PatchOperation : The JSONPatch operations you would like to apply to the instance
 
-
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "op")]
 pub enum PatchOperation {
-    #[serde(rename="AddOperation")]
+    #[serde(rename = "AddOperation")]
     AddOperation {
         /// The JSON Pointer Path you want to add or replace
         #[serde(rename = "path")]
@@ -26,7 +25,7 @@ pub enum PatchOperation {
         #[serde(rename = "from")]
         from: String,
     },
-    #[serde(rename="CopyOperation")]
+    #[serde(rename = "CopyOperation")]
     CopyOperation {
         /// The JSON Pointer path you would like to move/copy to
         #[serde(rename = "path")]
@@ -38,7 +37,7 @@ pub enum PatchOperation {
         #[serde(rename = "from")]
         from: String,
     },
-    #[serde(rename="MoveOperation")]
+    #[serde(rename = "MoveOperation")]
     MoveOperation {
         /// The JSON Pointer path you would like to move/copy to
         #[serde(rename = "path")]
@@ -50,7 +49,7 @@ pub enum PatchOperation {
         #[serde(rename = "from")]
         from: String,
     },
-    #[serde(rename="RemoveOperation")]
+    #[serde(rename = "RemoveOperation")]
     RemoveOperation {
         /// The JSON Pointer path to remove
         #[serde(rename = "path")]
@@ -62,7 +61,7 @@ pub enum PatchOperation {
         #[serde(rename = "from")]
         from: String,
     },
-    #[serde(rename="ReplaceOperation")]
+    #[serde(rename = "ReplaceOperation")]
     ReplaceOperation {
         /// The JSON Pointer Path you want to add or replace
         #[serde(rename = "path")]
@@ -76,6 +75,4 @@ pub enum PatchOperation {
     },
 }
 
-
-
-
+use serde::{Deserialize, Serialize};

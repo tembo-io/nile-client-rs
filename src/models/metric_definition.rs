@@ -10,8 +10,6 @@
 
 /// MetricDefinition : The list of metric definitions for a workspace or entity
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct MetricDefinition {
     /// The name of the metric
@@ -51,3 +49,4 @@ impl Default for RHashType {
     }
 }
 
+use serde::{Deserialize, Serialize};
