@@ -3,6 +3,9 @@ use std::error::Error;
 
 use log::error;
 
+pub mod apis;
+pub mod models;
+
 #[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
     pub op: String,
