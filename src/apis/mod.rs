@@ -24,7 +24,7 @@ impl<T> fmt::Display for Error<T> {
             Error::Io(e) => ("IO", e.to_string()),
             Error::ResponseError(e) => ("response", format!("status code {}", e.status)),
         };
-        write!(f, "error in {}: {}", module, e)
+        write!(f, "error in {module}: {e}")
     }
 }
 

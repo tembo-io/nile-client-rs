@@ -1,16 +1,23 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-use log::error;
+use log::{debug, error};
 
 pub mod apis;
 pub mod models;
 
 #[derive(Serialize, Debug)]
+pub struct InstancePatch {
+    pub op: String,
+    pub path: String,
+    pub value: serde_json::Value,
+}
+
+#[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
     pub op: String,
     pub path: String,
-    pub value: String,
+    pub properties: serde_json::Value,
 }
 
 #[derive(Deserialize, Debug, Serialize)]
@@ -157,7 +164,7 @@ impl NileClient {
         org: &str,
         entity_name: &str,
         instance_id: &str,
-        updates: Vec<InstanceUpdate>,
+        updates: Vec<InstancePatch>,
     ) -> Result<EntityInstance, Box<dyn Error>> {
         let uri = format!(
             "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
@@ -167,6 +174,7 @@ impl NileClient {
             id = instance_id
         );
 
+        debug!("patch data: {}", serde_json::to_string(&updates)?);
         let client = reqwest::Client::new();
         let resp = client
             .patch(uri)
