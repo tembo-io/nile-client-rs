@@ -1,7 +1,7 @@
+use log::{debug, error};
+use models::Organization;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
-
-use log::{debug, error};
 
 pub mod apis;
 pub mod models;
@@ -15,8 +15,6 @@ pub struct InstancePatch {
 
 #[derive(Serialize, Debug)]
 pub struct InstanceUpdate {
-    pub op: String,
-    pub path: String,
     pub properties: serde_json::Value,
 }
 
@@ -164,6 +162,35 @@ impl NileClient {
         org: &str,
         entity_name: &str,
         instance_id: &str,
+        update: serde_json::Value,
+    ) -> Result<EntityInstance, Box<dyn Error>> {
+        let uri = format!(
+            "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
+            base_url = self.base_url,
+            workspace = workspace,
+            entity_name = entity_name,
+            id = instance_id
+        );
+
+        debug!("patch data: {}", serde_json::to_string(&update)?);
+        let client = reqwest::Client::new();
+        let resp = client
+            .put(uri)
+            .json(&update)
+            .timeout(std::time::Duration::from_secs(5))
+            .header("Authorization", "Bearer ".to_owned() + &self._token)
+            .send()
+            .await?;
+
+        handle_response::<EntityInstance>(resp, "update_instance").await
+    }
+
+    pub async fn update_instance(
+        &self,
+        workspace: &str,
+        org: &str,
+        entity_name: &str,
+        instance_id: &str,
         updates: Vec<InstancePatch>,
     ) -> Result<EntityInstance, Box<dyn Error>> {
         let uri = format!(
@@ -185,6 +212,28 @@ impl NileClient {
             .await?;
 
         handle_response::<EntityInstance>(resp, "patch_instance").await
+    }
+
+    // get the properties of an organization given its organization_id
+    pub async fn get_organization(
+        &self,
+        workspace: &str,
+        organization_id: &str,
+    ) -> Result<Organization, Box<dyn Error>> {
+        let uri = format!(
+            "{base_url}/workspaces/{workspace}/orgs/{organization_id}",
+            base_url = self.base_url,
+        );
+
+        let client = reqwest::Client::new();
+        let resp = client
+            .get(uri)
+            .timeout(std::time::Duration::from_secs(5))
+            .header("Authorization", "Bearer ".to_owned() + &self._token)
+            .send()
+            .await?;
+
+        handle_response::<Organization>(resp, "get_organization").await
     }
 }
 
