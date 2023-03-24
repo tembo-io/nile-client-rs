@@ -156,35 +156,6 @@ impl NileClient {
     // update attributes on an existing entity
     // only supports the ReplaceOperation
     // https://www.thenile.dev/rest-api#tag/entities/operation/patchInstance
-    pub async fn patch_instance(
-        &self,
-        workspace: &str,
-        org: &str,
-        entity_name: &str,
-        instance_id: &str,
-        update: serde_json::Value,
-    ) -> Result<EntityInstance, Box<dyn Error>> {
-        let uri = format!(
-            "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
-            base_url = self.base_url,
-            workspace = workspace,
-            entity_name = entity_name,
-            id = instance_id
-        );
-
-        debug!("patch data: {}", serde_json::to_string(&update)?);
-        let client = reqwest::Client::new();
-        let resp = client
-            .put(uri)
-            .json(&update)
-            .timeout(std::time::Duration::from_secs(5))
-            .header("Authorization", "Bearer ".to_owned() + &self._token)
-            .send()
-            .await?;
-
-        handle_response::<EntityInstance>(resp, "update_instance").await
-    }
-
     pub async fn update_instance(
         &self,
         workspace: &str,
@@ -212,6 +183,35 @@ impl NileClient {
             .await?;
 
         handle_response::<EntityInstance>(resp, "patch_instance").await
+    }
+
+    pub async fn patch_instance(
+        &self,
+        workspace: &str,
+        org: &str,
+        entity_name: &str,
+        instance_id: &str,
+        update: serde_json::Value,
+    ) -> Result<EntityInstance, Box<dyn Error>> {
+        let uri = format!(
+            "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
+            base_url = self.base_url,
+            workspace = workspace,
+            entity_name = entity_name,
+            id = instance_id
+        );
+
+        debug!("patch data: {}", serde_json::to_string(&update)?);
+        let client = reqwest::Client::new();
+        let resp = client
+            .put(uri)
+            .json(&update)
+            .timeout(std::time::Duration::from_secs(5))
+            .header("Authorization", "Bearer ".to_owned() + &self._token)
+            .send()
+            .await?;
+
+        handle_response::<EntityInstance>(resp, "update_instance").await
     }
 
     // get the properties of an organization given its organization_id
