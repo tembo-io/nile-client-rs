@@ -162,7 +162,7 @@ impl NileClient {
         org: &str,
         entity_name: &str,
         instance_id: &str,
-        update: serde_json::Value,
+        updates: &[InstancePatch],
     ) -> Result<EntityInstance, Box<dyn Error>> {
         let uri = format!(
             "{base_url}/workspaces/{workspace}/orgs/{org}/instances/{entity_name}/{id}",
@@ -172,11 +172,11 @@ impl NileClient {
             id = instance_id
         );
 
-        debug!("patch data: {}", serde_json::to_string(&update)?);
+        debug!("patch data: {}", serde_json::to_string(&updates)?);
         let client = reqwest::Client::new();
         let resp = client
-            .put(uri)
-            .json(&update)
+            .patch(uri)
+            .json(&updates)
             .timeout(std::time::Duration::from_secs(5))
             .header("Authorization", "Bearer ".to_owned() + &self._token)
             .send()
