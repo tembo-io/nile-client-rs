@@ -182,7 +182,7 @@ impl NileClient {
             .send()
             .await?;
 
-        handle_response::<EntityInstance>(resp, "update_instance").await
+        handle_response::<EntityInstance>(resp, "patch_instance").await
     }
 
     pub async fn update_instance(
@@ -211,7 +211,7 @@ impl NileClient {
             .send()
             .await?;
 
-        handle_response::<EntityInstance>(resp, "patch_instance").await
+        handle_response::<EntityInstance>(resp, "update_instance").await
     }
 
     // get the properties of an organization given its organization_id
