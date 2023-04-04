@@ -1,6 +1,6 @@
 [package]
 name = "nile-client-rs"
-version = "0.0.4"
+version = "0.0.5"
 description = "A Rust client for the thenile.dev/"
 documentation = "https://github.com/CoreDB-io/nile-client-rs"
 edition = "2021"

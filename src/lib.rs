@@ -53,7 +53,7 @@ pub struct Event {
     pub org: String,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NileClient {
     base_url: String,
     auth_path: String,
